@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-# Load the saved pipeline
 with open('ipl_score_model.pkl', 'rb') as f:
     model_pipeline = pickle.load(f)
 
@@ -20,10 +19,8 @@ class MatchInput(BaseModel):
 
 @app.post("/predict")
 def predict(data: MatchInput):
-    # 1. Convert input to DataFrame (Must match the order of your training columns)
     input_df = pd.DataFrame([data.dict()])
     
-    # 2. Predict using the pipeline (Encoding is handled automatically!)
     prediction = model_pipeline.predict(input_df)
     
     return {"predicted_final_score": int(prediction[0])}
